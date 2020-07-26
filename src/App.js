@@ -8,6 +8,7 @@ const App = () => {
   const [breakCount, setBreakCount] = useState({ minutes: counterLengths.break, seconds: 0 })
   const [isActive, setIsActive] = useState(false)
   const [isBreak, setIsBreak] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
 
   const reset = () => {
     setCounterLengths({ break: 5, session: 25 })
@@ -31,40 +32,73 @@ const App = () => {
   }
 
   const decreaseSession = () => {
-    if (!isActive && counterLengths.session > 1) {
-      const updatedMinutes = counterLengths.session - 1
-      setCounterLengths({ ...counterLengths, session: updatedMinutes })
-      setSessionCount({ seconds: 0, minutes: updatedMinutes })
+    if (!isActive) {
+      if (counterLengths.session < 2) {
+        showToast("Minimum length is 1")
+      } else {
+        const updatedMinutes = counterLengths.session - 1
+        setCounterLengths({ ...counterLengths, session: updatedMinutes })
+        setSessionCount({ seconds: 0, minutes: updatedMinutes })
+      }
+    } else {
+      showToast("Pause clock before changing break or session length")
     }
   }
 
   const increaseSession = () => {
-    if (!isActive && counterLengths.session < 60) {
-      const updatedMinutes = counterLengths.session + 1
-      setCounterLengths({ ...counterLengths, session: updatedMinutes })
-      setSessionCount({ seconds: 0, minutes: updatedMinutes })
+    if (!isActive) {
+      if (counterLengths.session > 59) {
+        showToast("Maximum length is 60")
+      } else {
+        const updatedMinutes = counterLengths.session + 1
+        setCounterLengths({ ...counterLengths, session: updatedMinutes })
+        setSessionCount({ seconds: 0, minutes: updatedMinutes })
+      }
+
+    } else {
+      showToast("Pause clock before changing break or session length")
     }
   }
 
   const decreaseBreak = () => {
-    if (!isActive && counterLengths.break > 1) {
-      const updatedMinutes = counterLengths.break - 1
-      setCounterLengths({ ...counterLengths, break: updatedMinutes })
-      setBreakCount({ seconds: 0, minutes: updatedMinutes })
+    if (!isActive) {
+      if (counterLengths.break < 2) {
+        showToast("Minimum length is 1")
+      } else {
+        const updatedMinutes = counterLengths.break - 1
+        setCounterLengths({ ...counterLengths, break: updatedMinutes })
+        setBreakCount({ seconds: 0, minutes: updatedMinutes })
+      }
+
+    } else {
+      showToast("Pause clock before changing break or session length")
     }
   }
 
   const increaseBreak = () => {
-    if (!isActive && counterLengths.break < 60) {
-      const updatedMinutes = counterLengths.break + 1
-      setCounterLengths({ ...counterLengths, break: updatedMinutes })
-      setBreakCount({ seconds: 0, minutes: updatedMinutes })
+    if (!isActive) {
+      if (counterLengths.break > 59) {
+        showToast("Maximum length is 60")
+      } else {
+        const updatedMinutes = counterLengths.break + 1
+        setCounterLengths({ ...counterLengths, break: updatedMinutes })
+        setBreakCount({ seconds: 0, minutes: updatedMinutes })
+      }
+    } else {
+      showToast("Pause clock before changing break or session length")
     }
   }
 
   const formatCountNum = (num) => {
     if (num.toString().length < 2) return `0${num}`
     return num
+  }
+
+  const showToast = (message) => {
+    setToastMessage(message)
+    setTimeout(() => {
+      setToastMessage("")
+    }, 3000)
   }
 
   useEffect(() => {
@@ -127,6 +161,7 @@ const App = () => {
               </div>
             </div>
           </div>
+          <p className="toast-text">{toastMessage}</p>
           <div className="timer-container">
             {isBreak ? <h3>Break</h3> : <h3>Session</h3>}
             <p className="time-left">{isBreak ? formatCountNum(breakCount.minutes) + ":" + formatCountNum(breakCount.seconds) : formatCountNum(sessionCount.minutes) + ":" + formatCountNum(sessionCount.seconds)}</p>
@@ -143,7 +178,6 @@ const App = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   )

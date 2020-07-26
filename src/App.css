@@ -13,7 +13,6 @@
 }
 
 .container {
-  height: 100%;
   padding: 10px;
   margin: 0;
   display: flex;
@@ -68,6 +67,12 @@
 
 .length-display {
   width: 40px;
+}
+
+.toast-text {
+  font-size: 15px;
+  height: 20px;
+  color: darkred;
 }
 
 p {
