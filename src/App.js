@@ -1,35 +1,100 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 
 const App = () => {
-  const [state, setState] = useState({ breakLength: 5, sessionLength: 30, isCounting: false })
+  const [counterLengths, setCounterLengths] = useState({ break: 5, session: 25 })
+  const [sessionCount, setSessionCount] = useState({ minutes: counterLengths.session, seconds: 0 })
+  const [breakCount, setBreakCount] = useState({ minutes: counterLengths.break, seconds: 0 })
+  const [isActive, setIsActive] = useState(false)
+  const [isBreak, setIsBreak] = useState(false)
 
-  const incrementBreak = () => {
-    setState({ ...state, breakLength: state.breakLength + 1 })
-  }
-  const decrementBreak = () => {
-    setState({ ...state, breakLength: state.breakLength > 0 ? state.breakLength - 1 : 0 })
-  }
-
-  const incrementSession = () => {
-    setState({ ...state, sessionLength: state.sessionLength + 1 })
-  }
-  const decrementSession = () => {
-    setState({ ...state, sessionLength: state.sessionLength > 0 ? state.sessionLength - 1 : 0 })
+  const reset = () => {
+    setCounterLengths({ break: 5, session: 25 })
+    setSessionCount({ seconds: 0, minutes: 25 })
+    setBreakCount({ minutes: 5, seconds: 0 })
+    setIsActive(false)
+    setIsBreak(false)
   }
 
   const startCounting = () => {
-    setState({ ...state, isCounting: true })
+    setIsActive(true)
   }
 
   const pauseCounting = () => {
-    setState({ ...state, isCounting: false })
+    setIsActive(false)
   }
 
-  const resetTimer = () => {
-    setState({ ...state, breakLength: 5, sessionLength: 30 })
+  const playSound = () => {
+    const audio = new Audio("https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav")
+    audio.play()
   }
+
+  const decreaseSession = () => {
+    if (!isActive && counterLengths.session > 1) {
+      const updatedMinutes = counterLengths.session - 1
+      setCounterLengths({ ...counterLengths, session: updatedMinutes })
+      setSessionCount({ seconds: 0, minutes: updatedMinutes })
+    }
+  }
+
+  const increaseSession = () => {
+    if (!isActive && counterLengths.session < 60) {
+      const updatedMinutes = counterLengths.session + 1
+      setCounterLengths({ ...counterLengths, session: updatedMinutes })
+      setSessionCount({ seconds: 0, minutes: updatedMinutes })
+    }
+  }
+
+  const decreaseBreak = () => {
+    if (!isActive && counterLengths.break > 1) {
+      const updatedMinutes = counterLengths.break - 1
+      setCounterLengths({ ...counterLengths, break: updatedMinutes })
+      setBreakCount({ seconds: 0, minutes: updatedMinutes })
+    }
+  }
+
+  const increaseBreak = () => {
+    if (!isActive && counterLengths.break < 60) {
+      const updatedMinutes = counterLengths.break + 1
+      setCounterLengths({ ...counterLengths, break: updatedMinutes })
+      setBreakCount({ seconds: 0, minutes: updatedMinutes })
+    }
+  }
+
+  const formatCountNum = (num) => {
+    if (num.toString().length < 2) return `0${num}`
+    return num
+  }
+
+  useEffect(() => {
+    const toggleCounter = () => {
+      setIsBreak(!isBreak)
+      playSound()
+    }
+    let interval = null
+    if (isActive) {
+      const count = isBreak ? breakCount : sessionCount
+      let seconds = 0, minutes = 0
+      if (count.seconds === 0) {
+        if (count.minutes === 0) {
+          minutes = isBreak ? counterLengths.break : counterLengths.session
+          isBreak ? setBreakCount({ seconds: seconds, minutes: minutes }) : setSessionCount({ seconds: seconds, minutes: minutes })
+          toggleCounter()
+        } else {
+          minutes = count.minutes - 1
+          seconds = 59
+        }
+      } else {
+        minutes = count.minutes
+        seconds = count.seconds - 1
+      }
+      interval = setInterval(() => {
+        isBreak ? setBreakCount({ seconds: seconds, minutes: minutes }) : setSessionCount({ seconds: seconds, minutes: minutes })
+      }, 1000)
+    }
+    return () => clearInterval(interval)
+  }, [isActive, sessionCount, breakCount, counterLengths, isBreak])
 
   return (
     <div className="App">
@@ -40,11 +105,11 @@ const App = () => {
             <div className="break-controls-container">
               <h3>Break Length</h3>
               <div className="row">
-                <span onClick={decrementBreak}>
+                <span onClick={decreaseBreak}>
                   <i className="fas fa-minus"></i>
                 </span>
-                <p>{state.breakLength}</p>
-                <span onClick={incrementBreak}>
+                <p className="length-display">{counterLengths.break}</p>
+                <span onClick={increaseBreak}>
                   <i className="fas fa-plus"></i>
                 </span>
               </div>
@@ -52,30 +117,30 @@ const App = () => {
             <div className="session-controls-container">
               <h3>Session Length</h3>
               <div className="row">
-                <span onClick={decrementSession}>
+                <span onClick={decreaseSession}>
                   <i className="fas fa-minus"></i>
                 </span>
-                <p>{state.sessionLength}</p>
-                <span onClick={incrementSession}>
+                <p className="length-display">{counterLengths.session}</p>
+                <span onClick={increaseSession}>
                   <i className="fas fa-plus"></i>
                 </span>
               </div>
             </div>
           </div>
           <div className="timer-container">
-            <h3>Session</h3>
-            <p className="time-left">{state.sessionLength}</p>
-            <row>
+            {isBreak ? <h3>Break</h3> : <h3>Session</h3>}
+            <p className="time-left">{isBreak ? formatCountNum(breakCount.minutes) + ":" + formatCountNum(breakCount.seconds) : formatCountNum(sessionCount.minutes) + ":" + formatCountNum(sessionCount.seconds)}</p>
+            <div className="row">
               <span onClick={startCounting}>
                 <i className="fas fa-play"></i>
               </span>
               <span onClick={pauseCounting}>
                 <i className="fas fa-pause"></i>
               </span>
-              <span onClick={resetTimer}>
-                <i class="fas fa-sync-alt"></i>
+              <span onClick={reset}>
+                <i className="fas fa-sync-alt"></i>
               </span>
-            </row>
+            </div>
           </div>
         </div>
 

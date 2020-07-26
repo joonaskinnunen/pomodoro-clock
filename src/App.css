@@ -40,7 +40,11 @@
 }
 
 .break-controls-container {
-  margin-right: 80px;
+  width: 50%;
+}
+
+.session-controls-container {
+  width: 50%;
 }
 
 .timer-container {
@@ -62,6 +66,10 @@
   margin-top: 20px;
 }
 
+.length-display {
+  width: 40px;
+}
+
 p {
   margin-block-start: 0 !important;
   margin-block-end: 0 !important;
@@ -76,7 +84,6 @@ h2 {
   font-family: 'Monoton', cursive;
   color: #2b8670;
   margin-block-start: 0 !important;
-  margin-block-end: 0 !important;
 }
 
 h3 {
