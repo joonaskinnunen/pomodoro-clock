@@ -1,3 +1,10 @@
+## React calculator
+Simple Pomodoro Clock built with react.js
+
+Working demo: [http://pomodoro-clock-reactjs.herokuapp.com/](http://pomodoro-clock-reactjs.herokuapp.com/)
+
+![Screenshot](pomodoro-clock.png)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
