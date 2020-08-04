@@ -1,7 +1,7 @@
 ## Pomodoro Clock
 Simple Pomodoro Clock built with react.js
 
-Working demo: [http://pomodoro-clock-reactjs.herokuapp.com/](http://pomodoro-clock-reactjs.herokuapp.com/)
+Working app: [https://pomodoro-clock-reactjs.herokuapp.com/](http://pomodoro-clock-reactjs.herokuapp.com/)
 
 ![Screenshot](pomodoro-clock.png)
 
