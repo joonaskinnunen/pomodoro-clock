@@ -179,6 +179,7 @@ const App = () => {
           </div>
         </div>
       </div>
+      <p>This app is build by <a href="https://joonaskinnunen.github.io/">Joonas Kinnunen</a><br />Github repository: <a href="https://github.com/joonaskinnunen/pomodoro-clock">joonaskinnunen/pomodoro-clock</a></p>
     </div>
   )
 }
